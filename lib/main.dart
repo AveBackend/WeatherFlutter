@@ -25,6 +25,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String formattedTime = '';
+  City? selectedCity;
 
   @override
   void initState() {
@@ -33,7 +34,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void updateFormattedTime() {
-    // Обновление времени
     setState(() {
       DateTime now = DateTime.now();
       formattedTime = "${now.hour}:${now.minute}";
@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Погода \n$formattedTime msk'),
+        title: Text('Погода \n$formattedTime ${selectedCity?.name ?? ''}'),
         centerTitle: true,
         backgroundColor: Colors.grey,
         actions: [
@@ -68,7 +68,11 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Center(
           child: Container(
             color: Colors.black.withOpacity(0.7),
-            child: CitySelectionWidget(),
+            child: CitySelectionWidget(onCitySelected: (city) {
+              setState(() {
+                selectedCity = city;
+              });
+            }),
           ),
         ),
       ),
@@ -77,12 +81,17 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class CitySelectionWidget extends StatefulWidget {
+  final Function(City) onCitySelected; // Добавление именованного параметра
+
+  CitySelectionWidget({required this.onCitySelected});
+
   @override
   State<CitySelectionWidget> createState() => _CitySelectionWidgetState();
 }
 
 class _CitySelectionWidgetState extends State<CitySelectionWidget> {
   late final CityApiClient cityApiClient = CityApiClient();
+
   // Создание экземпляра CityApiClient
   @override
   Widget build(BuildContext context) {
@@ -97,6 +106,7 @@ class _CitySelectionWidgetState extends State<CitySelectionWidget> {
         );
       },
       onSelected: (City suggestion) {
+        widget.onCitySelected(suggestion);
         print('Selected city: ${suggestion.name}');
       },
     );
