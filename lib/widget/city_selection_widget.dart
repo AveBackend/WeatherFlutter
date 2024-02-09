@@ -14,7 +14,6 @@ class CitySelectionWidget extends StatefulWidget {
 class _CitySelectionWidgetState extends State<CitySelectionWidget> {
   late final CityApiClient cityApiClient = CityApiClient();
 
-  // Создание экземпляра CityApiClient
   @override
   Widget build(BuildContext context) {
     return TypeAheadField<City>(

@@ -1,6 +1,7 @@
 import 'package:app_1/data/city.dart';
+import 'package:app_1/widget/city_selection_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:app_1/widget/city_weather_widget.dart';
 
 void main() {
   runApp(const FlutterTutorialApp());
@@ -39,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
       formattedTime = "${now.hour}:${now.minute}";
     });
 
-    // Запуск функции обновления времени каждую секунд
+    // Запуск функции обновления времени каждую секунду
     if (mounted)
       Future.delayed(const Duration(seconds: 1), updateFormattedTime);
   }
@@ -68,47 +69,26 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Center(
           child: Container(
             color: Colors.black.withOpacity(0.7),
-            child: CitySelectionWidget(onCitySelected: (city) {
-              setState(() {
-                selectedCity = city;
-              });
-            }),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CitySelectionWidget(
+                  onCitySelected: (city) {
+                    setState(() {
+                      selectedCity = city;
+                    });
+                  },
+                ),
+                if (selectedCity != null)
+                  WeatherDisplayWidget(
+                    latitude: selectedCity!.latitude,
+                    longitude: selectedCity!.longitude,
+                  ),
+              ],
+            ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class CitySelectionWidget extends StatefulWidget {
-  final Function(City) onCitySelected; // Добавление именованного параметра
-
-  CitySelectionWidget({required this.onCitySelected});
-
-  @override
-  State<CitySelectionWidget> createState() => _CitySelectionWidgetState();
-}
-
-class _CitySelectionWidgetState extends State<CitySelectionWidget> {
-  late final CityApiClient cityApiClient = CityApiClient();
-
-  // Создание экземпляра CityApiClient
-  @override
-  Widget build(BuildContext context) {
-    return TypeAheadField<City>(
-      suggestionsCallback: (pattern) async {
-        final cities = await cityApiClient.getCities(pattern);
-        return cities;
-      },
-      itemBuilder: (context, suggestion) {
-        return ListTile(
-          title: Text(suggestion.name),
-        );
-      },
-      onSelected: (City suggestion) {
-        widget.onCitySelected(suggestion);
-        print('Selected city: ${suggestion.name}');
-      },
     );
   }
 }
