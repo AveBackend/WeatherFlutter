@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Container(
             color: Colors.black.withOpacity(0.7),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 CitySelectionWidget(
                   onCitySelected: (city) {

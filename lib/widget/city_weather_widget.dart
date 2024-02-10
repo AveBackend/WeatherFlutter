@@ -28,6 +28,15 @@ class _WeatherDisplayWidgetState extends State<WeatherDisplayWidget> {
     _fetchWeatherData();
   }
 
+  @override
+  void didUpdateWidget(covariant WeatherDisplayWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.latitude != widget.latitude ||
+        oldWidget.longitude != widget.longitude) {
+      _fetchWeatherData();
+    }
+  }
+
   Future<void> _fetchWeatherData() async {
     try {
       final weatherApiClient = WeatherApiClient();
@@ -55,15 +64,13 @@ class _WeatherDisplayWidgetState extends State<WeatherDisplayWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (_isLoading)
-            CircularProgressIndicator(), // отображаем индикатор загрузки, если данные загружаются
-          if (_errorMessage.isNotEmpty)
-            Text(_errorMessage), // выводим сообщение об ошибке, если оно есть
+          if (_isLoading) CircularProgressIndicator(),
+          if (_errorMessage.isNotEmpty) Text(_errorMessage),
           if (!_isLoading && _errorMessage.isEmpty)
             Text(
               'Temperature: ${_weatherData.temperatureList.first}°C',
               style: TextStyle(fontSize: 20, color: Colors.white),
-            ), // выводим температуру, если данные успешно загружены
+            ),
         ],
       ),
     );
