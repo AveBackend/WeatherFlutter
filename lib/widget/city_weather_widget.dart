@@ -60,16 +60,38 @@ class _WeatherDisplayWidgetState extends State<WeatherDisplayWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.0), // добавляем отступы для виджета
+      padding: EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (_isLoading) CircularProgressIndicator(),
           if (_errorMessage.isNotEmpty) Text(_errorMessage),
           if (!_isLoading && _errorMessage.isEmpty)
-            Text(
-              'Temperature: ${_weatherData.temperatureList.first}°C',
-              style: TextStyle(fontSize: 20, color: Colors.white),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Temperature for the next 24 hours:',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+                SizedBox(height: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(_weatherData.temperatureList.length,
+                      (index) {
+                    final hour = DateTime.now().add(Duration(
+                        hours: index + 1)); // Добавляем час к текущему времени
+                    final temperature = _weatherData.temperatureList[index];
+                    return Container(
+                      padding: EdgeInsets.symmetric(vertical: 4),
+                      child: Text(
+                        '${hour.hour.toString().padLeft(2, '0')}:00 - ${temperature.toString()}°C',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    );
+                  }),
+                ),
+              ],
             ),
         ],
       ),
